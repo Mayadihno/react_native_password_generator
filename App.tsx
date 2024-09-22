@@ -2,6 +2,7 @@ import React, {useState} from 'react';
 import {
   SafeAreaView,
   ScrollView,
+  StatusBar,
   StyleSheet,
   Text,
   TextInput,
@@ -26,6 +27,17 @@ const App = () => {
   const [symbols, setSymbols] = useState(false);
   const [numbers, setNumbers] = useState(false);
   const [isPassGenerated, setIsPassGenerated] = useState(false);
+  const [bgColor, setBgColor] = useState('#ffffff');
+
+  const generatColor = () => {
+    const hexRange = '0123456789ABCDEF';
+    let color = '#';
+
+    for (let i = 0; i < 6; i++) {
+      color += hexRange[Math.floor(Math.random() * 16)];
+    }
+    setBgColor(color);
+  };
 
   const generatePasswordString = (passwordLength: number) => {
     let characterList = '';
@@ -72,13 +84,15 @@ const App = () => {
 
   return (
     <ScrollView keyboardShouldPersistTaps="handled">
-      <SafeAreaView style={styles.appContainer}>
+      <SafeAreaView style={[styles.appContainer, {backgroundColor: bgColor}]}>
+        <StatusBar backgroundColor={bgColor} barStyle="dark-content" />
         <View style={styles.formContainer}>
           <Text style={styles.title}>Password Generator</Text>
           <Formik
             initialValues={{passwordLength: ''}}
             validationSchema={passwordSchema}
             onSubmit={values => {
+              console.log(values);
               generatePasswordString(+values.passwordLength);
             }}>
             {({
@@ -182,6 +196,15 @@ const App = () => {
             )}
           </Formik>
         </View>
+        <View style={styles.secondContainer}>
+          <View style={[styles.container]}>
+            <TouchableOpacity onPress={generatColor}>
+              <View style={styles.actionBtn}>
+                <Text style={styles.btnText}>Press me</Text>
+              </View>
+            </TouchableOpacity>
+          </View>
+        </View>
       </SafeAreaView>
     </ScrollView>
   );
@@ -190,6 +213,29 @@ const App = () => {
 export default App;
 
 const styles = StyleSheet.create({
+  container: {
+    paddingVertical: 20,
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  actionBtn: {
+    borderRadius: 10,
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    backgroundColor: '#245cab',
+  },
+  btnText: {
+    color: 'white',
+    fontSize: 20,
+    textTransform: 'uppercase',
+    fontWeight: 'bold',
+  },
+  secondContainer: {
+    marginTop: 40,
+    borderColor: '#000',
+    borderTopWidth: 1,
+  },
   appContainer: {
     flex: 1,
   },
